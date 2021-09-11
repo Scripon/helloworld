@@ -1722,7 +1722,7 @@ if ($.isNode()) {
     await notify.sendNotify(`${$.name}`, `${allMessage}`, {url: jxOpenUrl})
   }
   if (runTimesErr) {
-    await notify.sendNotify(`${$.name}上报失败`, runTimesErr, '', '\n\n你好,世界!')
+    await notify.sendNotify(`${$.name}上报失败`, runTimesErr, '')
   }
 })()
 

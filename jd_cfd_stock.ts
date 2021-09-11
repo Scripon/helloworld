@@ -34,7 +34,7 @@ let target: string[] = process.env.CFD_STOCK
     let stock = j.dwStockNum
     console.log(name, stock)
     if (target.includes(name) && stock !== 0) {
-      notify.sendNotify(`财富岛补货\n\n${name}`, `库存：${stock}`, '', '\n\n你好，世界！')
+      notify.sendNotify(`财富岛补货\n\n${name}`, `库存：${stock}`, '')
     }
   }
 })()

@@ -42,10 +42,10 @@ async function main() {
       unlinkSync('./sign.js')
       unlinkSync('./sign.log')
     } else {
-      await notify.sendNotify(`多合一签到  ${UserName}`, data, '', '\n\n你好，世界！')
+      await notify.sendNotify(`多合一签到  ${UserName}`, data, '')
     }
   }
-  await notify.sendNotify('JD签到All in One',message,'','\n\n你好，世界！')
+  await notify.sendNotify('JD签到All in One',message,'')
 }
 
 main().then()

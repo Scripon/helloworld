@@ -36,7 +36,7 @@ axios.get("https://api.sharecode.ga/api/notify", {timeout: 10000})
     let obj = res.data
     if (obj.time !== lastPush) {
       // 有新提醒
-      await notify.sendNotify(`@所有人\n\n${obj.title}`, obj.content, '', '\n\n你好，世界！')
+      await notify.sendNotify(`@所有人\n\n${obj.title}`, obj.content, '')
       fs.writeFileSync('./notify.log', obj.time + '', 'utf-8')
     }
   })

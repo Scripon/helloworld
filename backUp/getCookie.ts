@@ -68,7 +68,7 @@ let PUSH_COOKIE = process.env.PUSH_COOKIE ?? "false"
       console.log(cookies)
       console.log('\n哪个死妈东西说扫了此脚本被偷ck的？100行不到的代码你告诉我哪里是泄漏你ck的？')
       if (PUSH_COOKIE === "true")
-        await notify.sendNotify('Cookie', cookies + '\n\n哪个死妈东西说扫了此脚本被偷ck的？100行不到的代码你告诉我哪里是泄漏你ck的？', '', '\n\n你好，世界！')
+        await notify.sendNotify('Cookie', cookies + '\n\n哪个死妈东西说扫了此脚本被偷ck的？100行不到的代码你告诉我哪里是泄漏你ck的？', '')
       break
     } else if (code === 21) {
       console.log('二维码失效')

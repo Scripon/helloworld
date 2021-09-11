@@ -64,7 +64,7 @@ const urlSchema = `openjd://virtual?params=%7B%20%22category%22:%20%22jump%22,%2
     await notify.sendNotify(`${$.name}`, `${allMessage}`)
   }
   if (runTimesErr) {
-    await notify.sendNotify(`${$.name}上报失败`, runTimesErr, '', '\n\n你好,世界!')
+    await notify.sendNotify(`${$.name}上报失败`, runTimesErr, '')
   }
 })()
 

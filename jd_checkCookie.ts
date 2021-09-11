@@ -18,7 +18,7 @@ let cookie: string = '', UserName: string, index: number, errMsg: string = '';
     await api(index, cookie, UserName)
   }
   if (errMsg)
-    await notify.sendNotify("Cookie失效", errMsg, '', '你好，世界！')
+    await notify.sendNotify("Cookie失效", errMsg, '')
 })()
 
 async function api(index: number, cookie: string, username: string) {
