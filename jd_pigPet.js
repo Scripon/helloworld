@@ -15,7 +15,7 @@ Last Modified time: 2021-5-19 12:27:16
 
 ================Loon==============
 [Script]
-cron "12 0-23/6 * * *" script-path=jd_pigPet.js, tag=京东金融养猪猪
+cron "12 0-23/7 * * *" script-path=jd_pigPet.js, tag=京东金融养猪猪
 
 ===============Surge=================
 京东金融养猪猪 = type=cron,cronexp="12 0-23/6 * * *",wake-system=1,timeout=3600,script-path=jd_pigPet.js
