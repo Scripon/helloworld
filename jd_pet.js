@@ -15,7 +15,7 @@
 
 =================================Loon===================================
 [Script]
-cron "15 6-18/6 * * *" script-path=jd_pet.js,tag=东东萌宠
+cron "15 7-21/7 * * *" script-path=jd_pet.js,tag=东东萌宠
 
 ===================================Surge================================
 东东萌宠 = type=cron,cronexp="15 6-18/6 * * *",wake-system=1,timeout=3600,script-path=jd_pet.js
