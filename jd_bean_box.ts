@@ -1,5 +1,6 @@
 /**
  * cron: 0 9,12 * * *
+ * new Env('未知脚本');
  */
 import axios from 'axios';
 import USER_AGENT, {requireConfig, TotalBean, wait} from './TS_USER_AGENTS';

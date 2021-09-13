@@ -1,6 +1,7 @@
 /**
  * 京喜牧场
  * 买、喂、收蛋、锄草、挑逗
+ * new Env('京喜牧场');
  */
 
 import axios from 'axios';

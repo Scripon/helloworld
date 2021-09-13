@@ -1,8 +1,9 @@
 /**
 * TODO
 * 团
-* 
+*
 * cron: 30 * * * *
+* new Env('京喜工厂')
 */
 
 import {format} from 'date-fns';

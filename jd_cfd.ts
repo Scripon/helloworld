@@ -8,6 +8,7 @@
  *
  * 使用jd_env_copy.js同步js环境变量到ts
  * 使用jd_ts_test.ts测试环境变量
+ * new Env('京喜财富岛');
  */
 
 import axios from 'axios';

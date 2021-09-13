@@ -1,6 +1,7 @@
 /**
  * 任务、宝箱
  * TODO 助力
+ * new Env('京喜签到');
  */
 
 import axios from 'axios';

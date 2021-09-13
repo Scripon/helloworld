@@ -1,3 +1,7 @@
+/**
+ * new Env('京东摇钱树')
+ */
+
 import axios from 'axios';
 import USER_AGENT, {requireConfig, wait} from "./TS_USER_AGENTS";
 import {read} from "fs";

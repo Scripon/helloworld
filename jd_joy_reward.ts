@@ -2,6 +2,7 @@
  * 注意：
  * 0～15秒才会进行兑换
  * 16～59秒会进入死循环等待
+ * new Env('宠汪汪兑换');
  */
 import axios from 'axios';
 import {format} from 'date-fns';

@@ -1,3 +1,7 @@
+/**
+ * new Env('伊利');
+ */
+
 import {format} from 'date-fns';
 import axios from 'axios';
 import USER_AGENT, {TotalBean, requireConfig, wait} from "./TS_USER_AGENTS";

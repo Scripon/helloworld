@@ -6,6 +6,7 @@
  * 只有内部互助
  *
  * 其他功能下次
+ * new Env('极速版-发财大赢家');
  */
 
 import axios from 'axios'

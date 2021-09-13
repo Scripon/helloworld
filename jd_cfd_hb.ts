@@ -1,5 +1,6 @@
 /**
  * 我就是看看，不抢
+ * new Env('京喜财富岛');
  */
 
 import axios from 'axios';

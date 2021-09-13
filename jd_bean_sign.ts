@@ -1,3 +1,7 @@
+/**
+ * new Env('京东签到');
+ */
+
 import axios from "axios";
 import {readFileSync, writeFileSync, unlinkSync} from "fs";
 import {execSync} from "child_process";

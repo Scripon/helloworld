@@ -1,3 +1,7 @@
+/**
+ * new Env('工业品抽奖机');
+ */
+
 import axios from 'axios';
 import {requireConfig, TotalBean, wait} from './TS_USER_AGENTS';
 import * as dotenv from 'dotenv';
