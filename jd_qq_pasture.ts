@@ -1,3 +1,6 @@
+/**
+ * new Env('QQ星')
+ */
 import axios from 'axios';
 import USER_AGENT from './TS_USER_AGENTS';
 

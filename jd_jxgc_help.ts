@@ -1,5 +1,6 @@
 /**
 * cron: 30 * * * *
+* new Env('京喜工厂助力');
 */
 import axios from 'axios';
 import {requireConfig, wait, requestAlgo, decrypt, h5st} from './TS_USER_AGENTS';

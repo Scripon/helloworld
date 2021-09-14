@@ -2,6 +2,7 @@
  * export validate_num = 5
  * 默认预存5个validate
  * cron 58 7,15,23 * * *
+ * new Env('滑块验证码validate')
  */
 
 const http = require('http');

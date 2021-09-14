@@ -2,6 +2,7 @@
  * 使用自定义推送(sendNotify)
  * 实现艾特所有人
  * 用于重要消息提示
+ * new Env("自定义推送消息")
  */
 const fs = require('fs')
 const axios = require('axios')

@@ -1,3 +1,7 @@
+/**
+ * new Env('京喜牧场Token')
+ */
+
 function t(n, t) {
   var r = (65535 & n) + (65535 & t);
   return (n >> 16) + (t >> 16) + (r >> 16) << 16 | 65535 & r

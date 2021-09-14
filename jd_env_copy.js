@@ -1,6 +1,7 @@
 /**
  * task jd_env_copy.js now
  * ts-node jd_ts_test.ts
+ * new Env('env测试')
  */
 
 const fs = require('fs')
