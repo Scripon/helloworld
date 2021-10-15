@@ -1,8 +1,10 @@
 /**
  * new Env('获取InvokeKey')
+ * cron: 0 0 * * *
  */
 
 import axios from "axios";
+import {sendNotify} from '../sendNotify';
 
 !(async () => {
   let res: any = await api('https://prodev.m.jd.com/mall/active/2tZssTgnQsiUqhmg5ooLSHY9XSeN/index.html')
@@ -12,6 +14,9 @@ import axios from "axios";
   res = await api(file)
   file = res.match(/h=n\(\d+\),v="([^"]*)/)[1]
   console.log('invokeKey:', file)
+  if (file !== 'JL1VTNRadM68cIMQ') {
+    await sendNotify('invokeKey Update', file)
+  }
 })()
 
 async function api(url: string) {

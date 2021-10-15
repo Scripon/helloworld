@@ -6,8 +6,8 @@
  */
 
 import axios from 'axios';
-import {requireConfig, wait, requestAlgo, h5st} from './TS_USER_AGENTS';
-import {jxfactory} from "./utils/shareCodesTool";
+import {requireConfig, wait, requestAlgo, h5st} from '../TS_USER_AGENTS';
+import {jxfactory} from "../utils/shareCodesTool";
 
 let cookie: string = '', res: any = '', UserName: string, index: number;
 let shareCodes: string[] = [], shareCodesInternal: string[] = [], empCookie: string[] = [], HELP_HW: string = process.env.HELP_HW ?? "true";
@@ -93,7 +93,7 @@ function api(fn: string, stk: string, params: Params = {}) {
 
 async function getShareCodes() {
   try {
-    let {data} = await axios.get("https://api.jdsharecode.xyz/api/jxfactory/30")
+    let {data}: any = await axios.get("https://api.jdsharecode.xyz/api/jxfactory/30")
     console.log(`从助力池获取到30个:${JSON.stringify(data.data)}`)
     HELP_HW === 'true'
       ? shareCodes = [...shareCodesInternal, ...HW_CODE, ...data.data]
