@@ -25,17 +25,17 @@ let shareCodesSelf: { redEnvelopeId: string, inviter: string }[] = [], shareCode
     index = i + 1;
     console.log(`\n开始【京东账号${index}】${UserName}\n`);
 
-    // res = await api('openRedEnvelopeInteract', `{%22linkId%22:%22PFbUR7wtwUcQ860Sn8WRfw%22}`);
-    //
-    // if (res.code === 0) {
-    //   console.log('当前进度:', res.data.amount * 1, ' 还需要:', res.data.needAmount * 1 ?? (10 - res.data.needAmount * 1).toFixed(2))
-    //   await wait(1000)
-    // } else {
-    //   console.log('火爆？')
-    // }
+    res = await api('openRedEnvelopeInteract', '', '');
+    if (res.code === 0) {
+      console.log('当前进度:', res.data.amount * 1, ' 还需要:', res.data.needAmount * 1 ?? (10 - res.data.needAmount * 1).toFixed(2))
+      await wait(1000)
+    } else {
+      console.log('需要先手动打开红包。火爆？')
+    }
 
-    res = await api('redEnvelopeInteractHome', `{%22linkId%22:%22${id}%22,%22redEnvelopeId%22:%22%22,%22inviter%22:%22%22,%22helpType%22:%22%22}`)
+    res = await api('redEnvelopeInteractHome', '', '')
     if (res.data) {
+      console.log('助力码:', res.data.redEnvelopeId, res.data.inviter)
       shareCodesSelf.push({
         redEnvelopeId: res.data.redEnvelopeId,
         inviter: res.data.markedPin
@@ -57,7 +57,9 @@ let shareCodesSelf: { redEnvelopeId: string, inviter: string }[] = [], shareCode
     for (let boss of shareCodes) {
       if (boss.redEnvelopeId && boss.inviter) {
         console.log(`账号${i + 1} ${UserName} 去助力 `, boss.redEnvelopeId)
-        res = await api('openRedEnvelopeInteract', `{%22linkId%22:%22${id}%22,%22redEnvelopeId%22:%22${boss.redEnvelopeId}%22,%22inviter%22:%22${boss.inviter}%22,%22helpType%22:%222%22}`)
+        boss.inviter
+          ? res = await api('openRedEnvelopeInteract', boss.redEnvelopeId, boss.inviter, 2)
+          : res = await api('openRedEnvelopeInteract', boss.redEnvelopeId, boss.inviter, 1)
         console.log(JSON.stringify(res))
         if (res.code === 16020) {
           await wait(3000)
@@ -82,20 +84,17 @@ let shareCodesSelf: { redEnvelopeId: string, inviter: string }[] = [], shareCode
   }
 })()
 
-async function api(fn: string, body: any) {
-  let t = Date.now()
-  let url = `https://api.m.jd.com/?functionId=${fn}&body=${body}&t=${t}&appid=activities_platform&client=H5&clientVersion=1.0.0`
+async function api(fn: string, redEnvelopeId: string, inviter: string, helpType: number = 2) {
+  let linkId: string = 'PFbUR7wtwUcQ860Sn8WRfw'
   try {
-    let {data} = await axios.get(url, {
+    let {data} = await axios.get(`https://api.m.jd.com/?functionId=openRedEnvelopeInteract&body={%22linkId%22:%22${linkId}%22,%22redEnvelopeId%22:%22${redEnvelopeId}%22,%22inviter%22:%22${inviter}%22,%22helpType%22:%22${helpType}%22}&t=${Date.now()}&appid=activities_platform&clientVersion=3.5.0`, {
       headers: {
         'Host': 'api.m.jd.com',
-        'Connection': 'keep-alive',
-        'Accept': 'application/json, text/plain, */*',
-        'Origin': 'https://618redpacket.jd.com',
-        'User-Agent': 'jdltapp;',
-        'Referer': 'https://618redpacket.jd.com/?activityId=PFbUR7wtwUcQ860Sn8WRfw',
-        'Accept-Language': 'zh-CN,en-US;q=0.9',
-        'X-Requested-With': 'com.jd.jdlite',
+        'accept': 'application/json, text/plain, */*',
+        'origin': 'https://618redpacket.jd.com',
+        'user-agent': 'jdltapp;iPhone;3.5.0;14.2;network/wifi;hasUPPay/0;pushNoticeIsOpen/0;lang/zh_CN;model/iPhone10,2;hasOCPay/0;appBuild/1066;supportBestPay/0;pv/7.0;apprpd/;Mozilla/5.0 (iPhone; CPU iPhone OS 14_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1',
+        'accept-language': 'zh-cn',
+        'referer': `https://618redpacket.jd.com/?activityId=${linkId}&redEnvelopeId=${redEnvelopeId}&inviterId=${inviter}&helpType=1&lng=&lat=&sid=`,
         'Cookie': cookie
       }
     })
@@ -114,8 +113,6 @@ async function getCodesHW() {
     console.log('获取HW_CODES失败(api)')
   }
 }
-<<<<<<< HEAD
-=======
 
 function randomString(e: number) {
   e = e || 32;
@@ -124,4 +121,3 @@ function randomString(e: number) {
     n += t.charAt(Math.floor(Math.random() * a));
   return n
 }
->>>>>>> 362e421faabe70b03696083cffe650cf17463f84
