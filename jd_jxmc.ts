@@ -9,7 +9,7 @@ import axios from 'axios';
 import {Md5} from "ts-md5";
 import * as path from 'path';
 import {sendNotify} from './sendNotify';
-import {requireConfig, getBeanShareCode, getFarmShareCode, wait, requestAlgo, h5st, exceptCookie, resetHosts} from './TS_USER_AGENTS';
+import {requireConfig, getBeanShareCode, getFarmShareCode, wait, requestAlgo, h5st, exceptCookie, resetHosts, randomString} from './TS_USER_AGENTS';
 
 const cow = require('./utils/jd_jxmc.js').cow;
 const token = require('./utils/jd_jxmc.js').token;
@@ -44,12 +44,18 @@ let shareCodesHbSelf: string[] = [], shareCodesHbHw: string[] = [], shareCodesSe
     }
 
     jxToken = await token(cookie);
-    homePageInfo = await api('queryservice/GetHomePageInfo', 'activeid,activekey,channel,isgift,isqueryinviteicon,isquerypicksite,jxmc_jstoken,phoneid,sceneid,timestamp', {
-      isgift: 1,
-      isquerypicksite: 1,
-      isqueryinviteicon: 1
-    })
-    console.log(JSON.stringify(homePageInfo))
+    homePageInfo = await api('queryservice/GetHomePageInfo', 'activeid,activekey,channel,isgift,isqueryinviteicon,isquerypicksite,jxmc_jstoken,phoneid,sceneid,timestamp', {isgift: 1, isquerypicksite: 1, isqueryinviteicon: 1})
+    if (homePageInfo.data.maintaskId !== 'pause') {
+      console.log('init...')
+      for (let j = 0; j < 20; j++) {
+        res = await api('operservice/DoMainTask', 'activeid,activekey,channel,jxmc_jstoken,phoneid,sceneid,step,timestamp', {step: homePageInfo.data.maintaskId})
+        if (res.data.maintaskId === 'pause')
+          break
+        await wait(2000)
+      }
+    }
+
+    homePageInfo = await api('queryservice/GetHomePageInfo', 'activeid,activekey,channel,isgift,isqueryinviteicon,isquerypicksite,jxmc_jstoken,phoneid,sceneid,timestamp', {isgift: 1, isquerypicksite: 1, isqueryinviteicon: 1})
     let lastgettime: number
     if (homePageInfo.data?.cow?.lastgettime) {
       lastgettime = homePageInfo.data.cow.lastgettime
@@ -75,8 +81,9 @@ let shareCodesHbSelf: string[] = [], shareCodesHbHw: string[] = [], shareCodesSe
       console.log(e)
     }
 
-    console.log('现有草:', food);
-    console.log('金币:', coins);
+    console.log('草草🌿', food);
+    console.log('蛋蛋🥚', homePageInfo.data.eggcnt);
+    console.log('钱钱💰', coins);
 
     // 扭蛋机
     res = await api('queryservice/GetCardInfo', 'activeid,activekey,channel,jxmc_jstoken,phoneid,sceneid,timestamp')
@@ -312,7 +319,8 @@ interface Params {
   isqueryinviteicon?: number,
   showAreaTaskFlag?: number,
   jxpp_wxapp_type?: number,
-  dateType?: string
+  dateType?: string,
+  step?: string,
 }
 
 async function getTask() {
@@ -357,9 +365,9 @@ async function api(fn: string, stk: string, params: Params = {}) {
   try {
     let {data}: any = await axios.get(url, {
       headers: {
-        'Referer': 'https://st.jingxi.com/pingou/jxmc/index.html',
         'Host': 'm.jingxi.com',
-        'User-Agent': 'jdpingou;',
+        'User-Agent': `jdpingou;iPhone;5.9.0;12.4.1;${randomString(40)};network/wifi;`,
+        'Referer': 'https://st.jingxi.com/pingou/jxmc/index.html',
         'Cookie': cookie
       }
     })
