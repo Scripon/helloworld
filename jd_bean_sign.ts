@@ -3,7 +3,7 @@
  */
 
 import axios from "axios";
-import {readFileSync, writeFileSync, unlinkSync, accessSync} from "fs";
+import {readFileSync, writeFileSync, unlinkSync} from "fs";
 import {execSync} from "child_process";
 import {requireConfig} from "./TS_USER_AGENTS";
 
@@ -28,6 +28,7 @@ async function main() {
   }
   if (data.indexOf('京东多合一签到脚本') > -1) {
     data = data.replace('var OtherKey = ``;', `var OtherKey = \`${JSON.stringify(cookiesNobyDa)}\`;`)
+    data = data.replace(/ztmFUCxcPMNyUq0P/g, 'q8DNJdpcfRQ69gIx')
     writeFileSync('./sign.js', data, 'utf-8')
     execSync('node ./sign.js >> ./sign.log')
     data = readFileSync('./sign.log', 'utf-8')
