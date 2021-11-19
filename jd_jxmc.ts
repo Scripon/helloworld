@@ -209,7 +209,6 @@ let shareCodesHbSelf: string[] = [], shareCodesHbHw: string[] = [], shareCodesSe
     await wait(5000)
 
     while (coins >= 5000) {
-      await wait(10000)
       res = await api('operservice/Buy', 'activeid,activekey,channel,jxmc_jstoken,phoneid,sceneid,timestamp,type', {type: '1'})
       if (res.ret === 0) {
         console.log('买草成功:', res.data.newnum)
@@ -219,15 +218,15 @@ let shareCodesHbSelf: string[] = [], shareCodesHbHw: string[] = [], shareCodesSe
         console.log(res)
         break
       }
-      await wait(5000)
+      await wait(8000)
     }
-    await wait(5000)
+    await wait(6000)
 
     while (food >= 10) {
       food -= 10
       res = await api('operservice/Feed', 'activeid,activekey,channel,jxmc_jstoken,phoneid,sceneid,timestamp')
       if (res.ret === 0) {
-        console.log('剩余草:', res.data.newnum)
+        console.log('喂食:', res.data.newnum)
       } else if (res.ret === 2020) {
         console.log('收🥚')
         homePageInfo = await api('queryservice/GetHomePageInfo', 'activeid,activekey,channel,isgift,isqueryinviteicon,isquerypicksite,jxmc_jstoken,phoneid,sceneid,timestamp', {
@@ -255,7 +254,7 @@ let shareCodesHbSelf: string[] = [], shareCodesHbHw: string[] = [], shareCodesSe
         console.log('Feed未知错误:', res)
         break
       }
-      await wait(6000)
+      await wait(7000)
     }
     await wait(8000)
 
@@ -272,20 +271,20 @@ let shareCodesHbSelf: string[] = [], shareCodesHbHw: string[] = [], shareCodesSe
           await wait(5000)
         }
       } catch (e: any) {
-        console.log('Error:', e.response.status)
+        console.log('除草 Error:', e)
         break
       }
     }
-    await wait(5000)
+    await wait(6000)
 
     while (1) {
       try {
         res = await api('operservice/Action', 'activeid,activekey,channel,jxmc_jstoken,petid,phoneid,sceneid,timestamp,type', {type: '1', petid: petids[Math.floor((Math.random() * petids.length))]})
         if (res.data.addcoins === 0 || JSON.stringify(res.data) === '{}') break
         console.log('挑逗:', res.data.addcoins)
-        await wait(4000)
+        await wait(6000)
       } catch (e: any) {
-        console.log('Error:', e)
+        console.log('挑逗 Error:', e)
         break
       }
     }
@@ -406,13 +405,13 @@ async function api(fn: string, stk: string, params: Params = {}, temporary: bool
     else
       url = h5st(`https://m.jingxi.com/newtasksys/newtasksys_front/${fn}?_=${Date.now()}&source=jxmc&bizCode=jxmc&_stk=${encodeURIComponent(stk)}&_ste=1&sceneval=2&g_login_type=1&callback=jsonpCBK${String.fromCharCode(Math.floor(Math.random() * 26) + "A".charCodeAt(0))}&g_ty=ls`, stk, params, 10028)
   } else {
-    url = h5st(`https://m.jingxi.com/jxmc/${fn}?channel=7&sceneid=1001&activeid=jxmc_active_0001&activekey=null&jxmc_jstoken=${jxToken['farm_jstoken']}&timestamp=${jxToken['timestamp']}&phoneid=${jxToken['phoneid']}&_stk=${encodeURIComponent(stk)}&_ste=1&_=${Date.now()}&sceneval=2&g_login_type=1&callback=jsonpCBK${String.fromCharCode(Math.floor(Math.random() * 26) + "A".charCodeAt(0))}&g_ty=ls`, stk, params, 10028)
+    url = h5st(`https://m.jingxi.com/jxmc/${fn}?channel=7&sceneid=1001&activeid=jxmc_active_0001&activekey=null&jxmc_jstoken=${jxToken['farm_jstoken']}&timestamp=${jxToken['timestamp']}&phoneid=${jxToken['phoneid']}&_stk=${encodeURIComponent(stk)}&_ste=1&_=${Date.now()}&sceneval=2`, stk, params, 10028)
   }
   try {
     let {data}: any = await axios.get(url, {
       headers: {
         'Host': 'm.jingxi.com',
-        'User-Agent': `jdpingou;iPhone;5.9.0;12.4.1;${randomString(40)};network/wifi;`,
+        'User-Agent': `jdpingou;`,
         'Referer': 'https://st.jingxi.com/pingou/jxmc/index.html',
         'Cookie': cookie
       }
@@ -421,7 +420,6 @@ async function api(fn: string, stk: string, params: Params = {}, temporary: bool
       return JSON.parse(data.replace(/\n/g, '').match(/jsonpCBK.?\(([^)]*)/)![1])
     return data
   } catch (e: any) {
-    console.log('api Error:', e)
     return {}
   }
 }
