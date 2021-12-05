@@ -1,8 +1,8 @@
 /**
  * 京东-锦鲤红包
  * 做任务、助力、开红包
- * cron: 5 0,6,18 * * *
- * 固定log，不知道什么时候会黑
+ * cron: 2 0,6,18 * * *
+ * 固定log，不知道什么时候会gg
  * CK1助力顺序
  * HW_Priority: boolean
  * true  HW.ts -> 内部
@@ -18,23 +18,59 @@ process.env.HW_Priority === 'false' ? HW_Priority = false : ''
 
 !(async () => {
   let cookiesArr: any = await requireConfig();
-  for (let i = 0; i < cookiesArr.length; i++) {
+  for (let [index, value] of cookiesArr.entries()) {
     try {
-      cookie = cookiesArr[i];
+      cookie = value;
       UserName = decodeURIComponent(cookie.match(/pt_pin=([^;]*)/)![1])
-      index = i + 1;
-      console.log(`\n开始【京东账号${index}】${UserName}\n`);
+      console.log(`\n开始【京东账号${index + 1}】${UserName}\n`);
 
       res = await api('h5launch', {"followShop": 0, "random": getRandomNumberByRange(36135846, 74613584), "log": `${Date.now()}~0iuxyee`, "sceneid": "JLHBhPageh5"})
       console.log('活动初始化：', res.data.result.statusDesc)
-      await wait(2000)
+      await wait(1000)
 
       res = await api('h5activityIndex', {"isjdapp": 1})
       console.log('红包ID：', res.data.result.redpacketInfo.id)
       shareCodesSelf.push(res.data.result.redpacketInfo.id)
-      await wait(2000)
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
+  console.log('内部助力：', shareCodesSelf)
+  for (let [index, value] of cookiesArr.entries()) {
+    UserName = decodeURIComponent(cookie.match(/pt_pin=([^;]*)/)![1])
+    cookie = value;
+    if (shareCodesHW.length === 0) {
+      shareCodesHW = await getshareCodeHW('jlhb')
+    }
+    if (index === 0 && HW_Priority) {
+      shareCodes = Array.from(new Set([...shareCodesHW, ...shareCodesSelf]))
+    } else {
+      shareCodes = Array.from(new Set([...shareCodesSelf, ...shareCodesHW]))
+    }
+    for (let code of shareCodes) {
+      console.log(`账号${index + 1} ${UserName} 去助力 ${code}`)
+      res = await api('jinli_h5assist', {"redPacketId": code, "followShop": 0, "random": getRandomNumberByRange(36135846, 74613584), "log": `${Date.now()}~0gga2ik`, "sceneid": "JLHBhPageh5"})
+      if (res.data.result.status === 0) {
+        console.log('助力成功：', parseFloat(res.data.result.assistReward.discount))
+      } else if (res.data.result.status === 3) {
+        console.log('今日助力次数已满')
+        break
+      } else {
+        console.log('助力结果：', res.data.result.statusDesc)
+      }
+      await wait(1000)
+    }
+  }
+
+  for (let [index, value] of cookiesArr.entries()) {
+    try {
+      cookie = value
+      UserName = decodeURIComponent(cookie.match(/pt_pin=([^;]*)/)![1])
+      console.log(`\n开始【京东账号${index + 1}】${UserName}\n`);
 
       let j: number = 1
+      res = await api('h5activityIndex', {"isjdapp": 1})
       for (let t of res.data.result.redpacketConfigFillRewardInfo) {
         if (t.packetStatus === 2) {
           console.log(`红包${j}已拆过，获得`, t.packetAmount)
@@ -74,34 +110,6 @@ process.env.HW_Priority === 'false' ? HW_Priority = false : ''
       }
     } catch (e) {
       console.log(e)
-    }
-  }
-
-  console.log('内部助力：', shareCodesSelf)
-
-  for (let i = 0; i < cookiesArr.length; i++) {
-    cookie = cookiesArr[i];
-    UserName = decodeURIComponent(cookie.match(/pt_pin=([^;]*)/)![1])
-    if (shareCodesHW.length === 0) {
-      shareCodesHW = await getshareCodeHW('jlhb')
-    }
-    if (i === 0 && HW_Priority) {
-      shareCodes = Array.from(new Set([...shareCodesHW, ...shareCodesSelf]))
-    } else {
-      shareCodes = Array.from(new Set([...shareCodesSelf, ...shareCodesHW]))
-    }
-    for (let code of shareCodes) {
-      console.log(`账号 ${UserName} 去助力 ${code}`)
-      res = await api('jinli_h5assist', {"redPacketId": code, "followShop": 0, "random": getRandomNumberByRange(36135846, 74613584), "log": `${Date.now()}~0gga2ik`, "sceneid": "JLHBhPageh5"})
-      if (res.data.result.status === 0) {
-        console.log('助力成功：', parseFloat(res.data.result.assistReward.discount))
-      } else if (res.data.result.status === 3) {
-        console.log('今日助力次数已满')
-        break
-      } else {
-        console.log('助力结果：', res.data.result.statusDesc)
-      }
-      await wait(2000)
     }
   }
 })()
