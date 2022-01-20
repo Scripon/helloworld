@@ -6,11 +6,12 @@ import axios from "axios";
 import {readFileSync, writeFileSync, unlinkSync} from "fs";
 import {execSync} from "child_process";
 import {requireConfig} from "./TS_USER_AGENTS";
+import {sendNotify} from './sendNotify';
 
-let notify = require('./sendNotify'), message: string = '';
+let message: string = '';
 
 async function main() {
-  let cookiesArr: any = await requireConfig();
+  let cookiesArr: string[] = await requireConfig();
   let cookiesNobyDa: {
     cookie: string
   }[] = []
@@ -24,7 +25,7 @@ async function main() {
     data = data.data
     console.log('raw')
   } catch (e) {
-      data = '非脚本问题！网络错误，访问github失败'
+    console.log('非脚本问题！网络错误，访问github失败')
   }
   if (data.indexOf('京东多合一签到脚本') > -1) {
     data = data.replace('var OtherKey = ``;', `var OtherKey = \`${JSON.stringify(cookiesNobyDa)}\`;`)
@@ -37,7 +38,7 @@ async function main() {
     unlinkSync('./sign.js')
     unlinkSync('./sign.log')
   }
-  await notify.sendNotify('京东多合一签到脚本 via NobyDa@Github', message)
+  await sendNotify('京东多合一签到脚本 via NobyDa@Github', message)
 }
 
 main().then()
