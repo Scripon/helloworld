@@ -8,13 +8,23 @@ import * as path from "path"
 import {sendNotify} from './sendNotify'
 import {existsSync, mkdirSync, readFileSync, writeFileSync} from "fs"
 import USER_AGENT, {requireConfig, exceptCookie, wait} from "./TS_USER_AGENTS"
+import {pushplus} from "./utils/pushplus";
 
-let cookie: string = '', UserName: string, index: number, allMessage: string = '', res: any = '', message: string = ''
+let cookie: string = '', UserName: string, allMessage: string = '', res: any = ''
 
 !(async () => {
   let cookiesArr: string[] = await requireConfig()
   let except: string[] = exceptCookie(path.basename(__filename))
-  let orders: any = {}
+  let orders: any = {}, pushplusArr: { pt_pin: string, pushplus: string }[], pushplusUser: string[] = []
+  try {
+    pushplusArr = JSON.parse(readFileSync('./utils/pushplus.json', 'utf-8').toString())
+  } catch (e) {
+    console.log('utils/pushplus.json 加载错误')
+    pushplusArr = []
+  }
+  for (let user of pushplusArr) {
+    pushplusUser.push(decodeURIComponent(user.pt_pin))
+  }
   if (existsSync('./json')) {
     if (existsSync('./json/jd_track.json')) {
       orders = JSON.parse(readFileSync('./json/jd_track.json').toString() || '{}')
@@ -25,18 +35,18 @@ let cookie: string = '', UserName: string, index: number, allMessage: string = '
     mkdirSync('./json')
     writeFileSync('./json/jd_track.json', '{}')
   }
-  for (let i = 0; i < cookiesArr.length; i++) {
-    cookie = cookiesArr[i]
+  for (let [index, value] of cookiesArr.entries()) {
+    cookie = value
     UserName = decodeURIComponent(cookie.match(/pt_pin=([^;]*)/)![1])
-    index = i + 1
-    console.log(`\n开始【京东账号${index}】${UserName}\n`)
+    console.log(`\n开始【京东账号${index + 1}】${UserName}\n`)
 
     if (except.includes(encodeURIComponent(UserName))) {
       console.log('已设置跳过')
       continue
     }
 
-    message = ''
+    let message: string = '', markdown: string = ``, i: number = 1
+
     res = await getOrderList()
     await wait(2000)
 
@@ -52,23 +62,39 @@ let cookie: string = '', UserName: string, index: number, allMessage: string = '
 
       if (t && status) {
         if (status.match(/(?=签收|已取走|已暂存)/)) continue
-        console.log(title)
-        console.log('\t', t, status)
-        console.log()
+        if (!pushplusUser.includes(UserName)) {
+          console.log(title)
+          console.log('\t', t, status)
+          console.log()
+        } else {
+          console.log('隐私保护，不显示日志')
+        }
         if (Object.keys(orders).indexOf(orderId) > -1 && orders[orderId]['status'] !== status) {
-          message += `${title}\n${carrier}  ${carriageId}\n${t}  ${status}\n\n`
+          if (pushplusUser.includes(UserName)) {
+            console.log('+ pushplus')
+            markdown += `${i++}. ${title}\n\t- ${carrier}  ${carriageId}\n\t- ${t}  ${status}\n`
+          } else {
+            console.log('+ sendNotify')
+            message += `${title}\n${carrier}  ${carriageId}\n${t}  ${status}\n\n`
+          }
         }
         orders[orderId] = {
           user: UserName, title, t, status, carrier, carriageId
         }
       }
     }
+
     if (message) {
-      message = `<京东账号${i + 1}>  ${UserName}\n\n${message}`
+      message = `<京东账号${index + 1}>  ${UserName}\n\n${message}`
       allMessage += message
+    }
+    if (markdown) {
+      markdown = `#### <${UserName}>\n${markdown}`
+      await pushplus('京东快递更新', markdown, 'markdown')
     }
     await wait(1000)
   }
+
   orders = JSON.stringify(orders, null, 2)
   let account: { pt_pin: string, remarks: string, wxpusher_uid?: string }[] = JSON.parse(readFileSync('./utils/account.json').toString() || '[]') || []
   for (let acc of account) {
