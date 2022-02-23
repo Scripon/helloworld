@@ -17,13 +17,13 @@ let cookie: string = '', UserName: string, allMessage: string = '', res: any = '
   let except: string[] = exceptCookie(path.basename(__filename))
   let orders: any = {}, pushplusArr: { pt_pin: string, pushplus: string }[], pushplusUser: string[] = []
   try {
-    pushplusArr = JSON.parse(readFileSync('./utils/pushplus.json', 'utf-8').toString())
+    pushplusArr = JSON.parse(readFileSync('./utils/account.json').toString())
   } catch (e) {
-    console.log('utils/pushplus.json 加载错误')
-    pushplusArr = []
+    console.log('utils/pushplus.json load failed')
   }
   for (let user of pushplusArr) {
-    pushplusUser.push(decodeURIComponent(user.pt_pin))
+    if (user.pushplus)
+      pushplusUser.push(decodeURIComponent(user.pt_pin))
   }
   if (existsSync('./json')) {
     if (existsSync('./json/jd_track.json')) {
@@ -45,7 +45,7 @@ let cookie: string = '', UserName: string, allMessage: string = '', res: any = '
       continue
     }
 
-    let message: string = '', markdown: string = ``, i: number = 1
+    let message: string = '', markdown: string = '', i: number = 1
 
     res = await getOrderList()
     await wait(2000)
@@ -61,7 +61,8 @@ let cookie: string = '', UserName: string, allMessage: string = '', res: any = '
       let carrier: string = res.carrier, carriageId: string = res.carriageId
 
       if (t && status) {
-        if (status.match(/(?=签收|已取走|已暂存)/)) continue
+        if (status.match(/(?=签收|已取走|已暂存)/))
+          continue
         if (!pushplusUser.includes(UserName)) {
           console.log(title)
           console.log('\t', t, status)
@@ -69,7 +70,7 @@ let cookie: string = '', UserName: string, allMessage: string = '', res: any = '
         } else {
           console.log('隐私保护，不显示日志')
         }
-        if (Object.keys(orders).indexOf(orderId) > -1 && orders[orderId]['status'] !== status) {
+        if (!Object.keys(orders).includes(orderId) || orders[orderId]['status'] !== status) {
           if (pushplusUser.includes(UserName)) {
             console.log('+ pushplus')
             markdown += `${i++}. ${title}\n\t- ${carrier}  ${carriageId}\n\t- ${t}  ${status}\n`
@@ -95,10 +96,28 @@ let cookie: string = '', UserName: string, allMessage: string = '', res: any = '
     await wait(1000)
   }
 
+
+  let account: { pt_pin: string, remarks: string }[] = []
+  try {
+    account = JSON.parse(readFileSync('./utils/account.json').toString())
+  } catch (e) {
+    console.log('utils/account.json load failed')
+  }
+
+  // 删除已签收
+  Object.keys(orders).map(key => {
+    if (orders[key].status.match(/(?=签收|已取走|已暂存)/)) {
+      delete orders[key]
+    }
+    if (pushplusUser.includes(orders[key].user)) {
+      orders[key].title = '******'
+    }
+  })
+
+  // 替换通知中的用户名为备注
   orders = JSON.stringify(orders, null, 2)
-  let account: { pt_pin: string, remarks: string, wxpusher_uid?: string }[] = JSON.parse(readFileSync('./utils/account.json').toString() || '[]') || []
   for (let acc of account) {
-    orders = orders.replace(new RegExp(decodeURIComponent(acc['pt_pin']), 'g'), acc['remarks'])
+    orders = orders.replace(new RegExp(decodeURIComponent(acc.pt_pin), 'g'), acc.remarks)
   }
   writeFileSync('./json/jd_track.json', orders)
   if (allMessage)
