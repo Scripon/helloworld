@@ -41,8 +41,8 @@ let message: string = '', log: { help: string, runTimes: string } = {help: '', r
           log.runTimes += `第${i + 1}次${res}\n`
           break
         } catch (e) {
-          console.log(`第${i + 1}次上报失败`)
-          log.runTimes += `第${i + 1}次上报失败\n`
+          console.log(`第${i + 1}次上报失败`, e)
+          log.runTimes += `第${i + 1}次上报失败 ${typeof e === 'object' ? JSON.stringify(e) : e}\n`
           await wait(getRandomNumberByRange(10000, 30000))
         }
       }
