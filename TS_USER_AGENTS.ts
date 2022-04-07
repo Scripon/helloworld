@@ -3,6 +3,7 @@ import {Md5} from "ts-md5"
 import * as dotenv from "dotenv"
 import {existsSync, readFileSync} from "fs"
 import {sendNotify} from './sendNotify'
+import {rejects} from "assert";
 
 dotenv.config()
 
@@ -361,13 +362,18 @@ function get(url: string, prarms?: string, headers?: any): Promise<any> {
 }
 
 function post(url: string, prarms?: string | object, headers?: any): Promise<any> {
-  return axios.post(url, prarms, {
-    headers: headers
+  return new Promise((resolve, reject) => {
+    axios.post(url, prarms, {
+      headers: headers
+    }).then(res => {
+      resolve(res.data)
+    }).catch(err => {
+      reject({
+        code: err?.response?.status || -1,
+        msg: err?.response?.statusText || err.message || 'error'
+      })
+    })
   })
-    .then(res => res.data)
-    .catch(err => {
-      console.log(err?.response?.status, err?.response?.statusText)
-    });
 }
 
 export default USER_AGENT
